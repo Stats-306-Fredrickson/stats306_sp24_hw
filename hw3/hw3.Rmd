@@ -1,0 +1,150 @@
+---
+title: "Stats 306, Spring 2024, Homework 3"
+author: "Your name, Your uniqname"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(quantmod)
+```
+
+## Question 1 (8 points)
+
+The S&P 500 is a collection of companies that have the highest market capitialization on stock market. The stock ticker symbol for this collection is "SPY". These stocks can also be broken down by different sectors, which also have ticker symbols.
+
+- XLC: communication services
+- XLY: consumer discretionary
+- XLP: consumer staples
+- XLE: energy
+- XLF: financials
+- XLV: health care
+- XLI: industrials
+- XLB: materials
+- XLRE: real estate
+- XLK: technology
+- XLU: utilities 
+
+```{r cache = TRUE}
+getSymbols(c("SPY", 
+           "XLE", "XLU", "XLK", "XLB",
+           "XLP", "XLY", "XLI", "XLC",
+           "XLV", "XLF", "XLRE"))
+
+g <- function(s) { as_tibble(s, rownames = "date") }
+stocks <- g(SPY) |>
+  inner_join(g(XLE), by = "date") |>
+  inner_join(g(XLU), by = "date") |>
+  inner_join(g(XLK), by = "date") |>
+  inner_join(g(XLB), by = "date") |>
+  inner_join(g(XLP), by = "date") |>
+  inner_join(g(XLY), by = "date") |>
+  inner_join(g(XLI), by = "date") |>
+  inner_join(g(XLC), by = "date") |>
+  inner_join(g(XLV), by = "date") |>
+  inner_join(g(XLF), by = "date") |>
+  inner_join(g(XLRE), by = "date") |>
+  mutate(date = ymd(date))
+```
+
+
+### Part a (3 points)
+
+Group the data by year. Create a new column that shows the daily price as a proportion of the price on January 1 (i.e., the first value in the yearly vector). Plot the resulting column as a line plot with the date as the horizontal axis.
+
+### Part b (2 point)
+
+The `diff` function computes differences between successive values in a vector.
+
+```{r}
+diff(c(1, 3, 5, 7, 11, 13, 17, 19, 23))
+```
+
+Since we do not have a 0th item, we have one fewer differences than original values.
+
+Write a function that takes a vector and returns the differences with NA appended to the front of the vector.
+
+### Part c (3 points)
+
+Use select to get all opening prices (see the `matches` helper function). Using `transmute`, `across` and the `diff` function, convert all columns other than SPY into daily price changes. Use the `na.omit` function to remove any missing values. Then compute the pairwise correlations using the `cor` function.
+
+* Which pair of sector indexes have the largest correlation (hint: see the `arr.ind` argument for the `which` function; also be careful -- each index will have correlation 1 with itself, exclude these values)? 
+* Do any pairs have negative correlation?
+
+
+## Question 2 (6 points)
+
+Let's write some custom functions. For each parts, write the function(s) and demonstrate it on the supplied inputs.
+
+### Part a (2 points)
+
+For data measured over time, a moving average computes the average value at time $t$ using the previous values, which are called "lagged" values.
+
+Write a moving average function function that takes a single vector `a` as an input and returns a new vector `v` of the same length using 3 lagged values. 
+
+```
+v[i] == (a[i] + a[i - 1] + a[i - 2]) / 3
+```
+
+Treat the missing values at the start as equal to `a[1]`.
+
+Update the stock table to include the moving average for the `price` column and plot this as a red line on top of the dots.
+
+```{r}
+# The S&P 500 is a collection of 500 stocks with the largest market capitalization
+recent_spy <- stocks |>
+  filter(date > now() - months(6))
+
+ggplot(recent_spy, aes(x = date)) + geom_point(aes(y = SPY.Close)) + ylab("SPY Closing Price")
+```
+
+### Part b (2 points)
+
+Write a predicate function (`positive`) that returns true if all values in a vector are strictly positive.
+Write a predicate (`no_outliers`) that returns true if all observations are within 3 standard deviations of the mean.
+
+Demonstrate your predicate functions using `select` on this data set:
+
+```{r}
+set.seed(2024306)
+n <- 100
+d <- tibble(x = runif(n), y = runif(n, -1, 1), z = rnorm(100)^2, w = log(runif(n)))
+```
+
+### Part c (2 points)
+
+Top and bottom coding is the process of truncating values at given minimum and maximum values.
+
+Write a function that will top and bottom code a vector. It should take a vector as an argument, along with two optional arguments to set the values to truncate. Make the defaults equal to 0 and 1.
+
+Demonstrate your function on the following vector and show that the minimum and maximum are equal to 0 and 1. Also show setting the optional arguments to -1 and 2.
+
+```{r}
+set.seed(110224)
+x <- rnorm(100)
+```
+
+## Question 3 (6 points)
+
+This question will use the `diamonds` data contained in into the `ggplot2` library.
+
+## Part a (2 points)
+
+* Create an ECDF plot for the `carat` column of the `diamonds` table.
+* Explain in your own words what this plot shows.
+* Using the plot, approximately, what proportion of values have a carat size of 1 carat or less?
+* Using the plot, in this data set, for what value of `carat` would 75% of the observations have a carat of that size or lower.
+
+## Part b (2 points)
+
+* Compute the proportion of diamonds that are of each `cut` type.
+* Create a plot that shows the conditional distribution of price for each `cut` category.
+* For what types of cuts are prices typically high?
+
+## Part c (2 points)
+
+Select at least one additional variable not used in parts (a) or (b). Investigate this variable along with carat and cut. Create two plots that help you understand the relationships between these variables. Briefly comment on what you have learned about the diamonds in this data set.
+
+

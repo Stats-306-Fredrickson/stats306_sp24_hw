@@ -1,0 +1,148 @@
+---
+title: "Stats 306, Spring 2024, Homework 1"
+author: "Your Name, Your Uniqname"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+## Question 1 (8 points)
+
+### Part a (5 points)
+
+Using the `Help -> Cheatsheets -> RMarkdown Reference Guide`, demonstrate the use of the following:
+
+* Bold and italic text
+* The header that will show up smaller than "Part a" above
+* A link that points to posit.cloud
+* A blockquote that displays these two lines from Shakespeare's Sonnet 52:
+  * Blessed are you whose worthiness gives scope,
+  * Being had, to triumph, being lacked, to hope.
+* A numbered list with three elements. One element should have a sublist is just bullet points.
+* Along with this .Rmd file there is a `um_logo.png` file. Include the image in this RMarkdown document.
+* A table that organizes the following information:
+  * State: Michigan, Capital: Lansing, State Flower: Apple Blossom
+  * State: Ohio, Capital: Columbus, State Flower: Carnation
+  * State: Wisconsin, Capital: Madison, State Flower: Wood Violet
+
+### Part b (2 points)
+
+The University of Michigan was founded in 1817. Create an R chunk and compute the number of years that UM has existed.
+
+Create another chunk. This time save the computation to a variable and hide the computation by setting the `include = FALSE` option in the chunk header.
+
+Use inline R to complete the following sentence (without copying and pasting your answer from the first R chunk):
+
+> The University of Michigan is NUMBER OF YEARS old.
+
+### Part c (1 point)
+
+One nice feature of RMarkdown is plots are included automatically. Here is a plot using a data set that comes packages with the `ggplot2` library. It includes different diamonds of values, cuts, carat, clarity, and other features.
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price))+ geom_point()
+```
+Add `fig.height = X, fig.width = Y` to the chunk header, where X and Y are values you will pick for the height and width of the figure in inches. Try a few different values until you find a figure size you like. Then hide the code itself using `echo = FALSE`.
+
+## Question 2 (6 points)
+
+Recall, the sample mean is defined as:
+
+$$ \bar X_n = \frac{1}{n} \sum_{i = 1}^n X_i$$
+
+and the sample variance is defined as
+$$ {\widehat{\sigma}}^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - \bar X_n)^2$$
+
+These are often used to create Z-scores:
+
+$$Z_i = \frac{X_i - \bar X}{\widehat{\sigma}}$$
+
+### Part a (2 points)
+
+A fundamental principle of good computer programming is avoiding repetition of
+code. The acronym DRY stands for Don't Repeat Yourself. Using *variables*, clean
+up the code below to avoid repetition.
+
+```{r}
+7 + 4 + 6 + 2 # the sample total
+(7 + 4 + 6 + 2) / 4 # the sample mean
+((7 - 4.75)^2 + (4 - 4.75)^2 + (6 - 4.75)^2 + (2 - 4.75)^2) / (4 - 1) # sample variance
+sqrt(4.916667) # sample standard deviation
+c((7 - 4.75) / 2.17356,
+  (4 - 4.75) / 2.17356,
+  (6 - 4.75) / 2.17356,
+  (2 - 4.75) / 2.17356) # a vector of Z-scores
+```
+
+### Part b (2 points)
+
+Using *vectorized* computations, compute the sample mean and sample variance of
+the `displ` column of the `mpg` data set. Do not use the functions `mean` or
+`var`. You may use `length` and `sum`.
+
+```{r}
+
+```
+
+### Part c (2 points)
+
+The correlation coefficient is defined as average product fo Z-scores for two different measurements:
+
+$$r_{xy} = \frac{1}{n - 1} \sum_{i=1}^n \left(\frac{X_i - \bar X}{\widehat \sigma_x}\right)  \left(\frac{Y_i - \bar Y}{\widehat \sigma_y}\right)$$
+Using vectorized computations, calculate the correlation of `hwy` and `cty` columns from the `mpg` table. You may use `mean` and `std` to calculate the sample means and standard deviations. You can check your work using the `cor` function, but you cannot use that in your solution.
+
+```{r}
+
+```
+
+
+
+
+## Question 3 (6 points)
+
+### Part a (2 points)
+
+Investigate the data set `starwars` (this data set is automatically loaded when we include the `tidyverse` library). Answer the following
+
+* How many characters are listed?
+* What kind of data is the `species` column?
+* Explain what the value `NA` means in the `hair_color` column.
+* How many characters are from Tatooine?
+* For humans, what is the average (mean) age (the `birth_year` column actually appears to contain age)?
+
+### Part b (2 points)
+
+Create a scatter plot of the columns `height` and `mass` from the `starwars`
+data set. What jumps out from the plot? Do a little investigation to find out
+about that point. In particular, what is the name of the character that has the unusual values?
+
+### Part c (2 points)
+
+The `films` column is a little unusual in that it is a list of films that character has appeared in. For example, Luke Skywalker has appeared in the following films (at least when this data set was compiled):
+
+```{r}
+starwars |> filter(name == "Luke Skywalker") |> pull(films)
+```
+
+Here is a new version of the table that has one row for each character-movie combination.
+
+```{r}
+starwars_films <- unnest(starwars, films) |> mutate(film = films, films = NULL)
+
+# compare the number of rows and columns
+dim(starwars) 
+dim(starwars_films)
+```
+Here is Luke Skywalker's portion of the table now:
+
+```{r}
+starwars_films |> filter(name == "Luke Skywalker") |> select(name, height, mass, sex, film)
+```
+
+* Create a plot that shows the number of characters that appear in each film. 
+* Make a second plot that shows the conditional distribution of `birth_year` for each film.
+
