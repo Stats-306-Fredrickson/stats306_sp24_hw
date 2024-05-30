@@ -1,0 +1,131 @@
+---
+title: "Project 1"
+author: "Stats 306 Instructional Team"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(AER)
+data("STAR")
+```
+## The Tennessee STAR Project
+
+A widely studied educational data set is the Tennessee Student/Teacher Achievement Ratio study. The goal of this study was see the effect of classroom side (in terms on the number of students per teacher) on academic achievement. These data are available in the AER package (among other locations). From the help page for the `STAR` data set:
+
+> Project STAR (Student/Teacher Achievement Ratio) was a four-year longitudinal class-size study funded by the Tennessee General Assembly and conducted in the late 1980s by the State Department of Education. Over 7,000 students in 79 schools were randomly assigned into one of three interventions: small class (13 to 17 students per teacher), regular class (22 to 25 students per teacher), and regular-with-aide class (22 to 25 students with a full-time teacher's aide). Classroom teachers were also randomly assigned to the classes they would teach. The interventions were initiated as the students entered school in kindergarten and continued through third grade.
+>
+> The Project STAR public access data set contains data on test scores, treatment groups, and student and teacher characteristics for the four years of the experiment, from academic year 1985–1986 to academic year 1988–1989. The test score data analyzed in this chapter [of the textbook this paragraph comes from] are the sum of the scores on the math and reading portion of the Stanford Achievement Test.
+
+To view the entire help page type the following in the Console:
+
+```{r eval = FALSE}
+?STAR
+```
+
+The `STAR` table contains one row for each student who participated in the program.
+
+```{r}
+dim(STAR)
+```
+
+In this project, you will analyze the STAR data in two parts and write a conclusion. In the first part, you will perform Exploratory Data Analysis on particular variables in the STAR data and interpret your results. In the second section, you will be directed to use particular programming techniques, but you may complete them using the data in ways you think are useful or interesting. In the final section, you will summarize your findings using easy to read markdown and hidden R code.
+
+### Rubric
+
+- Part 1: 40%
+- Part 2: 40%
+- Part 3: 15%
+- Overall clarity and formatting: 5%
+
+## Part 1: Basic Data Visualization
+
+### Marginal Distributions
+
+Provide plots of the marginal distributions of the following variables in the STAR data set:
+
+- `gender`
+- `stark`
+- `readk`
+- `mathk`
+- `experiencek`
+
+For each variable, look up the description of the variable in the `STAR` help page and use to give a better label to the scale for the variable.
+
+#### Interpreation of results
+
+Write a brief paragraph about what you observe in these plots. What questions would identify for further study based on your plots?
+
+### Joint and Conditional Distributions
+
+Provide plots of either joint distributions or conditional distributions as appropriate for the following pairs of variables in the STAR data set:
+
+- `gender` and `stark`
+- `readk` and `read1`
+- Sum the `readk` and `mathk` and `stark`
+- Using a facet plot, repeat the previous plot also adding `experiencek`
+
+#### Interpreation of results
+
+Write a brief paragraph about what you observe in these plots. What do we learn from these plots? Why would the 3 and 4 plot be particularly important for the people fielding this study (based on the quoted paragraphs above)?
+
+### Numerical Summaries
+
+Using tools we have discussed for computing numerical summaries, compute the following:
+
+- The proportion of students in each type of STAR class in kindergarten (`stark`).
+- The number of each `gender` in within `stark` class type.
+- Compute the median reading and math scores in kindergarten for students in each type of STAR class.
+- Repeat the previous computation also grouping by `experiencek`.
+- Create a column that shows the difference in `math1` and `mathk` for each student. Compute the mean difference for students in each type of `stark` class.
+- Within each type of STAR class, subtract the median `mathk` score from each student's score. Compute the mean centered-math-score for each level of `experiencek`.
+
+#### Interpretation
+
+Write a brief paragraph about what you observe in these numerical summaries. Again, think about what information the study creators wanted to ask and how these computations are useful to explore the data in light of those considerations.
+
+## Part 2: Additional Activities
+
+In this section, you will be directed to use specific tools, but you may apply them to the data set as you see fit. In each section, write a brief explanation of how you are using the tool.
+
+### Table Operations
+
+#### `group_by`, `summarize`, and `mutate`
+
+Use `group_by`, `summarize`, and `mutate` to modify and summarize the data in ways not performed in the previous section. Perform three separate applications of these tools. Write a paragraph explaining your intent and what you learn from the results of the computations.
+
+#### `filter` and `select`
+
+Use the `filter` and `select` functions to drill down into interesting subsets of the data. You may use `across(everything(), ...)` in a `mutate` or `summarize` as a reason for selecting particular columns.  Write a paragraph explaining your goals and how you can use these functions to achieve them. 
+
+### Custom Functions
+
+#### Avoid repetition
+
+Look over the previous sections of this project and identify repetitive or similar code that could replaced with a function. You may use optional arguments or the `...` argument, but they are not required.
+
+Explain your function's usage and demonstrate it on the STAR data.
+
+#### Predicate functions
+
+Identify some feature of the the columns in the STAR table that can be either true or false. Write a predicate function to identify these columns and applying it using the `select` function. Summarize the result and explain why it was useful. You may find it helpful to use `filter` first to restrict your attention to a particular subset of the data.
+
+### Advanced ggplot
+
+Create one or plots that make use of the following advanced ggplot features. Across your plots, use each feature at least once.
+
+- coordinate systems
+- added `stat_*` layers or alternate `stat` arguments for a `geom_*` functions
+- `facet_grid`
+
+Write a paragraph interpreting your plots.
+
+## Part 3: Conclusion
+
+Write two to three concluding paragraphs about what you have learned about the Tennessee STAR study and the effect of different classroom sizes on student achievement. Use markdown to make the formatting of your conclusion easy to read. Use the features of R chunks and inline R to include calculations without burdening the reader with understanding R code.
+
+
+
+
